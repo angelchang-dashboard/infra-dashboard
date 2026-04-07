@@ -663,8 +663,8 @@ const EFF = {
       {m:'25-11',eff:1.413,tgt:null},{m:'25-12',eff:1.489,tgt:null},
     ],
     fy26:[
-      {m:'26-01',eff:1.277467,tgt:1.5622,cost:3449.30},
-      {m:'26-02',eff:1.264152,tgt:1.3195,cost:3167.08},
+      {m:'26-01',eff:1.277467,tgt:1.319534,cost:3449.30},
+      {m:'26-02',eff:1.264152,tgt:1.275023,cost:3167.08},
     ],
   },
 };
@@ -1091,7 +1091,7 @@ const CPU_PROD_BY_SCENE = {
     {name:'通用型节点',   data:[1.61,  1.64],  physData:[1.69,  1.72],  price:'15.13', amt:[0.80,  0.81]},
     {name:'混部容器VCPU', data:[1.57,  1.59],  physData:[14.60, 14.77], price:'7.99',  amt:[0.78,  0.79]},
     {name:'MYSQL',       data:[0.74,  0.72],  physData:[0.21,  0.21],  price:'52.00', amt:[0.37,  0.36]},
-    {name:'其他',         data:[3.27,  2.61],  physData:[1.99,  1.56],  price:'—',     amt:[1.62,  1.27]},
+    {name:'其他',         data:[3.27,  2.56],  physData:[1.99,  1.50],  price:'—',     amt:[1.62,  1.27]},
   ],
 };
 
@@ -1108,8 +1108,8 @@ let GPU_PROD = GPU_PROD_BY_SCENE['数据'];
 
 // 存储数据（按日期）
 const STORAGE_DATES = {
-  '1月31日': {std_pib:653.40, std_amt:23.84, arch_pib:382.21, arch_amt:7.90, req_amt:0.43, total_amt:32.16},
-  '2月28日': {std_pib:682.42, std_amt:24.91, arch_pib:379.10, arch_amt:7.83, req_amt:0.45, total_amt:33.19},
+  '1月31日': {std_pib:653.40, std_amt:23.84, arch_pib:382.21, arch_amt:7.90, req_amt:0.59, total_amt:32.31},
+  '2月28日': {std_pib:682.42, std_amt:24.91, arch_pib:379.10, arch_amt:7.83, req_amt:0.61, total_amt:33.34},
 };
 // 存储应用Top3明细
 const STORAGE_APPS = [
@@ -1165,11 +1165,11 @@ const OM_DATA = {
   数据: {
     dates:      ['1月31日','2月28日'],
     cpuCores:   [153.03, 142.70],
-    cpuDay:     [75.91,  70.79],
+    cpuDay:     [76.14,  71.02],
     gpuCards:   [84,     84],
     gpuDay:     [1.01,   1.01],
     storagePiB: [653.40, 682.42],
-    storageDay: [32.16,  33.19],
+    storageDay: [32.31,  33.34],
     saasDay:    [11.05,  14.43],
     diskDay:    [2.47,   2.48],
     netDay:     [1.73,   1.59],
@@ -1807,18 +1807,14 @@ function renderOModel() {
     OM.cpuBudAmt = bList.map(b => b * 0.59);
     OM.gpuBudAmt = bList.map(b => b * 0.19);
   } else {
-    OM.totalBud = _sc === '数据'
-      ? [7937.4,8179.4,8394.8,8619.7,8832.9,9048.4,9289.1,9486.0,9575.9,9789.5,9953.1,10113.7]
-      : BUDGETS[_sc].monthly.map(v => v * 1.06);
+    OM.totalBud = BUDGETS[_sc] ? BUDGETS[_sc].monthly.map(v => v * 1.06) : OM.totalBud;
   }
 
   // 场景实际月度数据（含税）
   const scActuals = {
-    推荐: [8964.17, 8270.07],
-    搜索: [6689.77*1.06, 7445.49*1.06],
-    社区: [5891.98*1.06, 5832.17*1.06],
+    数据: [3656.26, 3357.10],
   };
-  const actuals2 = scActuals[_sc] || [8964.17, 8270.07];
+  const actuals2 = scActuals[_sc] || [3656.26, 3357.10];
   const ytdAct  = actuals2.reduce((a,b)=>a+b,0);
   const ytdBud  = OM.totalBud[0] + OM.totalBud[1];
   const ytdDiff2 = ytdAct - ytdBud;
