@@ -844,7 +844,7 @@ function renderOverview(filterSc){
 }
 
 // ════════ 场景 Tab 切换 ════════
-let curScene = '推荐';
+let curScene = '数据';
 let showFY25 = false;
 
 function toggleFY25(){
@@ -1160,6 +1160,31 @@ const NET_DATA = {
   linePrice: [null, null],
 };
 
+const OM_DATA = {
+  数据: {
+    dates:      ['1月31日','2月28日'],
+    cpuCores:   [153.03, 142.70],
+    cpuDay:     [75.91,  70.79],
+    gpuCards:   [84,     84],
+    gpuDay:     [1.01,   1.01],
+    storagePiB: [653.40, 682.42],
+    storageDay: [32.16,  33.19],
+    saasDay:    [11.05,  14.43],
+    diskDay:    [2.47,   2.48],
+    netDay:     [1.73,   1.59],
+    cpuPrice: null, gpuPrice: null,
+    cpuBudAmt: [2208.6,2258.3,2283.9,2380.8,2482.4,2556.9,2665.9,2762.3,2753.7,2858.7,2868.8,2880.5],
+    gpuBudAmt: [60.8,70.3,79.3,80.7,82.1,83.5,83.5,83.5,83.5,83.5,83.5,83.5],
+  },
+};
+// 补充加权单价（由最新截面反推）
+['数据'].forEach(sc => {
+  const d = OM_DATA[sc];
+  const last = d.dates.length - 1;
+  d.cpuPrice = (d.cpuDay[last] * 30.5) / d.cpuCores[last];
+  d.gpuPrice = (d.gpuDay[last] * 30.5) * 10000 / d.gpuCards[last];
+});
+
 // 全组件金额（amt数组与DATES对应）
 // COMPONENTS 按场景动态生成（在 renderOptPanel 里调用 getComponents(sc)）
 const COMP_LABELS  = ['CPU','GPU','其他SAAS','存储','云盘','网络'];
@@ -1255,8 +1280,8 @@ function renderOptPanel(){
 function renderResDetail(){
   // 根据当前场景切换产品明细数据
   const _sc = typeof curOuterScene !== 'undefined' ? curOuterScene : '数据';
-  CPU_PROD = CPU_PROD_BY_SCENE[_sc] || CPU_PROD_BY_SCENE['推荐'];
-  GPU_PROD = GPU_PROD_BY_SCENE[_sc] || GPU_PROD_BY_SCENE['推荐'];
+  CPU_PROD = CPU_PROD_BY_SCENE[_sc] || CPU_PROD_BY_SCENE['数据'];
+  GPU_PROD = GPU_PROD_BY_SCENE[_sc] || GPU_PROD_BY_SCENE['数据'];
 
   const lastIdx = DATES.length - 1;
   const lastDate = DATES[lastIdx];
@@ -1695,11 +1720,11 @@ function renderResDetail(){
 let curOuterScene = '数据';
 
 renderHeader();
-renderSummary('推荐');
-renderOverview('推荐');
+renderSummary('数据');
+renderOverview('数据');
 // 把预实对比内容放进 tab-1
 document.getElementById('tab-2').classList.add('hidden');
-renderScene('推荐');
+renderScene('数据');
 
 // ════════ 外层场景切换 ════════
 function switchSceneOuter(sc) {
@@ -1742,30 +1767,7 @@ function switchSceneOuter(sc) {
 
 // ════════ Tab3: 优化测算 ════════
 // ════════ 各场景截面数据 ════════
-const OM_DATA = {
-  数据: {
-    dates:      ['1月31日','2月28日'],
-    cpuCores:   [153.03, 142.70],
-    cpuDay:     [75.91,  70.79],
-    gpuCards:   [84,     84],
-    gpuDay:     [1.01,   1.01],
-    storagePiB: [653.40, 682.42],
-    storageDay: [32.16,  33.19],
-    saasDay:    [11.05,  14.43],
-    diskDay:    [2.47,   2.48],
-    netDay:     [1.73,   1.59],
-    cpuPrice: null, gpuPrice: null,
-    cpuBudAmt: [2208.6,2258.3,2283.9,2380.8,2482.4,2556.9,2665.9,2762.3,2753.7,2858.7,2868.8,2880.5],
-    gpuBudAmt: [60.8,70.3,79.3,80.7,82.1,83.5,83.5,83.5,83.5,83.5,83.5,83.5],
-  },
-};
-// 补充加权单价（由最新截面反推）
-['数据'].forEach(sc => {
-  const d = OM_DATA[sc];
-  const last = d.dates.length - 1;
-  d.cpuPrice = (d.cpuDay[last] * 30.5) / d.cpuCores[last];
-  d.gpuPrice = (d.gpuDay[last] * 30.5) * 10000 / d.gpuCards[last];
-});
+
 
 
 const OM = {
@@ -1804,7 +1806,7 @@ function renderOModel() {
     OM.cpuBudAmt = bList.map(b => b * 0.59);
     OM.gpuBudAmt = bList.map(b => b * 0.19);
   } else {
-    OM.totalBud = _sc === '推荐'
+    OM.totalBud = _sc === '数据'
       ? [7937.4,8179.4,8394.8,8619.7,8832.9,9048.4,9289.1,9486.0,9575.9,9789.5,9953.1,10113.7]
       : BUDGETS[_sc].monthly.map(v => v * 1.06);
   }
