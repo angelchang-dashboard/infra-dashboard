@@ -1054,7 +1054,22 @@ function switchMainTab(n){
     if(btn) btn.className = `main-tab${i===n?' active':''}`;
     if(panel) panel.classList.toggle('hidden', i!==n);
   });
-  if(n===2){ setTimeout(()=>{ renderOptPanel(); switchResTab(curResTab); }, 100); }
+  if(n===2){
+    // 先把所有 res-panel 全部临时显示，让 canvas 有尺寸，渲染完再 hide 非当前
+    RES_PANELS.forEach(k=>{
+      const p = document.getElementById(`res-panel-${k}`);
+      if(p) p.classList.remove('hidden');
+    });
+    setTimeout(()=>{
+      renderOptPanel();
+      renderResDetail();
+      // 渲染完成后再 hide 非当前 tab
+      RES_PANELS.forEach(k=>{
+        const p = document.getElementById(`res-panel-${k}`);
+        if(p) p.classList.toggle('hidden', k !== curResTab);
+      });
+    }, 100);
+  }
   if(n===3) setTimeout(renderOModel, 50);
 }
 
@@ -1777,6 +1792,7 @@ const OM = {
   totalBud:  [3768.4,3883.5,3991.2,4162.2,4337.6,4478.0,4667.8,4826.7,4810.1,4973.7,5035.3,5090.2],
   cpuBudAmt: [2208.6,2258.3,2283.9,2380.8,2482.4,2556.9,2665.9,2762.3,2753.7,2858.7,2868.8,2880.5],
   gpuBudAmt: [60.8,70.3,79.3,80.7,82.1,83.5,83.5,83.5,83.5,83.5,83.5,83.5],
+  BILLING_DAYS: 30.5,
 };
 const OM_MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
 let omYearChart;
