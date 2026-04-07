@@ -1556,18 +1556,19 @@ function renderResDetail(){
   const stAppBody = document.getElementById('opt-storage-app-tbl');
   stAppBody.innerHTML='';
   STORAGE_APPS.forEach(r=>{
-    const up = r.chgPct > 15;
-    const chgColor = r.chgPct > 15 ? 'text-red-500 font-semibold' : r.chgPct < 0 ? 'text-green-600' : 'text-slate-500';
-    const arrow = r.chgPct > 0 ? '↑' : '↓';
+    const up = r.chgPct != null && r.chgPct > 15;
+    const chgColor = r.chgPct == null ? 'text-slate-300' : r.chgPct > 15 ? 'text-red-500 font-semibold' : r.chgPct < 0 ? 'text-green-600' : 'text-slate-500';
+    const arrow = r.chgPct == null ? '' : r.chgPct > 0 ? '↑' : '↓';
+    const chgText = r.chgPct == null ? '—' : `${arrow} ${Math.abs(r.chgPct)}%`;
     stAppBody.innerHTML+=`<tr class="border-b border-slate-50 tbl-row">
       <td class="py-2 px-3"><code class="text-xs bg-slate-100 px-1 rounded">${r.app}</code></td>
       <td class="py-2 px-3 text-xs text-slate-500">${r.prod}</td>
       <td class="py-2 px-3 text-xs text-slate-400">${r.type}</td>
       <td class="py-2 px-3 text-right text-slate-500 text-xs">${r.janPib!=null?r.janPib.toFixed(1)+' PiB':'—'}</td>
-      <td class="py-2 px-3 text-right">${r.janAmt.toFixed(2)}万</td>
+      <td class="py-2 px-3 text-right">${r.janAmt!=null?r.janAmt.toFixed(2)+'万':'—'}</td>
       <td class="py-2 px-3 text-right text-slate-500 text-xs">${r.febPib!=null?r.febPib.toFixed(1)+' PiB':'—'}</td>
-      <td class="py-2 px-3 text-right">${r.febAmt.toFixed(2)}万</td>
-      <td class="py-2 px-3 text-right ${chgColor}">${arrow} ${Math.abs(r.chgPct)}%</td>
+      <td class="py-2 px-3 text-right">${r.febAmt!=null?r.febAmt.toFixed(2)+'万':'—'}</td>
+      <td class="py-2 px-3 text-right ${chgColor}">${chgText}</td>
     </tr>`;
   });
 
